@@ -1,15 +1,13 @@
 import ThemeProvider from "@/shared/config/theme/ThemeProvider";
-
-export const metadata = {
-  title: "Dashboard Platform",
-  description: "Next.js + MUI + FSD",
-};
+import StoreProvider from "@/shared/store/Provider";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <StoreProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </StoreProvider>
       </body>
     </html>
   );
