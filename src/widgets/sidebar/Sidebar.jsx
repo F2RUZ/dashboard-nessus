@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 
 import {
   Box,
@@ -19,7 +19,7 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import { useDispatch } from "react-redux";
 import { logout } from "@/features/auth/model/authSlice";
 import { useRouter } from "next/navigation";
@@ -34,6 +34,11 @@ const navigationItems = [
     name: "Mening Profilim",
     path: "/dashboard/profile",
     Icon: PersonRoundedIcon,
+  },
+  {
+    name: "Sozlamalar",
+    path: "/dashboard/settings",
+    Icon: SettingsRoundedIcon,
   },
 ];
 
@@ -118,7 +123,7 @@ export default function Sidebar() {
           return (
             <ListItem key={item.path}>
               <ListItemButton
-                component={Link} 
+                component={Link}
                 href={item.path}
                 aria-current={isActive ? "page" : undefined}
                 sx={{
