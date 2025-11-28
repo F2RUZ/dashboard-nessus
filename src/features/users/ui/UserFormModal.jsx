@@ -58,6 +58,14 @@ export default function UserFormModal({
     color: "success",
   });
 
+  const handleClose = () => {
+    setFormData(initialUserState);
+    setErrors({});
+    resetAdd();
+    resetUpdate();
+    onClose();
+  };
+
   React.useEffect(() => {
     if (open) {
       if (isEdit && initialData.name) {
@@ -71,29 +79,21 @@ export default function UserFormModal({
         setFormData(initialUserState);
       }
       setErrors({});
+      setSnackbar({ open: false, message: "", color: "success" });
     }
-    setSnackbar({ open: false, message: "", color: "success" });
   }, [open, isEdit, initialData]);
 
   React.useEffect(() => {
-    if (!open) {
-      setFormData(initialUserState);
-      setErrors({});
-      resetAdd();
-      resetUpdate();
-      return;
-    }
-
     if (isAddError || isUpdateError) {
       setSnackbar({
         open: true,
         message: "Xatolik: Mutatsiya amalga oshmadi. Konsolni tekshiring.",
         color: "danger",
       });
-      resetAdd();
-      resetUpdate();
+      if (isAddError) resetAdd();
+      if (isUpdateError) resetUpdate();
     }
-  }, [open, isAddError, isUpdateError, resetAdd, resetUpdate]);
+  }, [isAddError, isUpdateError, resetAdd, resetUpdate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -178,7 +178,7 @@ export default function UserFormModal({
           });
         }
 
-        onClose();
+        handleClose();
       } catch (error) {
         console.error("Mutatsiya xatosi:", error);
 
@@ -220,7 +220,7 @@ export default function UserFormModal({
         {snackbar.message}
       </Snackbar>
 
-      <Modal open={open} onClose={onClose}>
+      <Modal open={open} onClose={handleClose}>
         <ModalDialog
           sx={{
             width: "clamp(90%, 500px, 95%)",
@@ -230,7 +230,7 @@ export default function UserFormModal({
             flexDirection: "column",
           }}
         >
-          <ModalClose onClick={onClose} />
+          <ModalClose onClick={handleClose} />
           <Typography level="h4" component="h2" sx={{ mb: 1 }}>
             {title}
           </Typography>
@@ -325,8 +325,8 @@ export default function UserFormModal({
               <Button
                 variant="plain"
                 color="neutral"
-                onClick={onClose}
-                type="button" 
+                onClick={handleClose}
+                type="button"
               >
                 Bekor qilish
               </Button>

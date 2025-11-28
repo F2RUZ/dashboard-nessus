@@ -1,3 +1,5 @@
+// src/widgets/sidebar/Sidebar.jsx
+
 "use client";
 import * as React from "react";
 import Link from "next/link";
@@ -12,18 +14,21 @@ import {
   ListItemDecorator,
   Button,
   IconButton,
+  useTheme,
+  Drawer,
 } from "@mui/joy";
 
+import useMediaQuery from "@mui/material/useMediaQuery";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded"; // 🟢 Yangi ikonka
-import { useDispatch } from "react-redux";
+import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded";
+import { useDispatch, useSelector } from "react-redux"; // useSelector import qilindi
 import { logout } from "@/features/auth/model/authSlice";
 import { useRouter } from "next/navigation";
+
 
 const navigationItems = [
   {
@@ -31,16 +36,10 @@ const navigationItems = [
     path: "/dashboard",
     Icon: DashboardRoundedIcon,
   },
-
   {
     name: "Analitika",
     path: "/dashboard/analytics",
     Icon: AnalyticsRoundedIcon,
-  },
-  {
-    name: "Sozlamalar",
-    path: "/dashboard/settings",
-    Icon: SettingsRoundedIcon,
   },
   {
     name: "Mening Profilim",
@@ -49,7 +48,7 @@ const navigationItems = [
   },
   {
     name: "Sozlamalar",
-    path: "/dashboard/settings",
+    path: "/dashboard/settings", 
     Icon: SettingsRoundedIcon,
   },
 ];
@@ -59,33 +58,31 @@ export default function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(false); // Desktop rejim uchun
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  // 2. LOGIKA
   const handleLogout = () => {
     dispatch(logout());
     router.replace("/login");
   };
 
   const toggleSidebar = () => {
+    // Agar bu funksiya faqat desktopda kichraytirish uchun ishlatilsa
     setIsCollapsed((prev) => !prev);
   };
 
   const sidebarWidth = isCollapsed ? 70 : 240;
 
-  return (
+  const renderSidebarContent = (
     <Box
-      component="nav"
       sx={{
         p: 2,
-        minHeight: "100vh",
-        width: sidebarWidth,
-        flexShrink: 0,
-        bgcolor: "background.surface",
-        borderRight: "1px solid",
-        borderColor: "divider",
+        height: "100%",
         display: "flex",
         flexDirection: "column",
-        transition: "width 0.2s",
       }}
     >
       <Box
@@ -107,15 +104,17 @@ export default function Sidebar() {
           </Typography>
         )}
 
-        <IconButton
-          variant="plain"
-          color="neutral"
-          size="sm"
-          onClick={toggleSidebar}
-          sx={{ ml: isCollapsed ? 0 : "auto" }}
-        >
-          {isCollapsed ? <MenuRoundedIcon /> : <MenuOpenRoundedIcon />}
-        </IconButton>
+        {!isMobile && (
+          <IconButton
+            variant="plain"
+            color="neutral"
+            size="sm"
+            onClick={toggleSidebar}
+            sx={{ ml: isCollapsed ? 0 : "auto" }}
+          >
+            {isCollapsed ? <MenuRoundedIcon /> : <MenuOpenRoundedIcon />}
+          </IconButton>
+        )}
       </Box>
 
       <List
@@ -128,9 +127,10 @@ export default function Sidebar() {
         }}
       >
         {navigationItems.map((item) => {
+          // Dashboardni to'g'ri faollashtirish mantiqi
           const isActive =
             pathname === item.path ||
-            (item.path === "/dashboard" && pathname.startsWith("/dashboard/"));
+            (item.path === "/dashboard" && pathname === "/dashboard");
 
           return (
             <ListItem key={item.path}>
@@ -176,6 +176,41 @@ export default function Sidebar() {
           {!isCollapsed ? "Chiqish" : null}
         </Button>
       </Box>
+    </Box>
+  );
+
+  if (isMobile) {
+    return (
+      <Drawer
+        open={false} // Bu holat Redux orqali layoutda boshqarilishi kerak
+        onClose={() => {}}
+        size="sm"
+        sx={{
+          "--Drawer-contentSize": "240px",
+        }}
+      >
+        {renderSidebarContent}
+      </Drawer>
+    );
+  }
+
+  return (
+    <Box
+      component="nav"
+      sx={{
+        minHeight: "100vh",
+        width: sidebarWidth,
+        flexShrink: 0,
+        bgcolor: "background.surface",
+        borderRight: "1px solid",
+        borderColor: "divider",
+        position: "sticky", // Desktopda doim ekranda turishi uchun
+        top: 0,
+        display: { xs: "none", sm: "block" }, // Mobil (xs) da butunlay yashiramiz
+        transition: "width 0.2s",
+      }}
+    >
+      {renderSidebarContent}
     </Box>
   );
 }
