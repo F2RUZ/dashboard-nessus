@@ -1,7 +1,15 @@
-// src/features/users/ui/UsersTable.jsx
 "use client";
 import React, { useState, useMemo } from "react";
-import { useGetUsersQuery } from "@/shared/api/randomUsersApi";
+
+// RTK Query importlari
+import {
+  useGetUsersQuery,
+  useDeleteUserMutation,
+} from "@/shared/api/randomUsersApi";
+
+// Modallar importlari (UserViewModal qo'shildi)
+import UserFormModal from "./UserFormModal";
+import UserViewModal from "./UserViewModal";
 
 // Joy UI importlari
 import {
@@ -14,6 +22,11 @@ import {
   Avatar,
   IconButton,
   Input,
+  Modal,
+  ModalDialog,
+  Divider,
+  Snackbar,
+  Button as JoyButton,
 } from "@mui/joy";
 import { useTheme } from "@mui/joy/styles";
 
@@ -21,7 +34,10 @@ import { useTheme } from "@mui/joy/styles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import SearchIcon from "@mui/icons-material/Search"; // Search ikonkasini qo'shamiz
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import WarningIcon from "@mui/icons-material/Warning";
 
 // Material UI importlari
 import Pagination from "@mui/material/Pagination";
@@ -55,12 +71,66 @@ export default function UsersTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const limit = 15;
 
-  // 2. RTK QUERY HOOK
+  // FORM MODAL HOLATI
+  const [openFormModal, setOpenFormModal] = useState(false);
+  const [formModalMode, setFormModalMode] = useState("add");
+  const [formInitialData, setFormInitialData] = useState({});
+
+  // KO'RISH MODALI HOLATI <<<< QO'SHILDI
+  const [openViewModal, setOpenViewModal] = useState(false);
+  const [userToView, setUserToView] = useState(null);
+
+  // O'CHIRISH MODALI HOLATI
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  // SNACKBAR HOLATI
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    color: "success",
+  });
+
+  // 2. RTK QUERY HOOKS
   const { data, error, isLoading, isFetching } = useGetUsersQuery({
     page,
     limit,
     search: searchTerm,
   });
+
+  const [
+    deleteUser,
+    {
+      isLoading: isDeleting,
+      isSuccess: isDeleteSuccess,
+      isError: isDeleteError,
+      reset: resetDelete,
+    },
+  ] = useDeleteUserMutation();
+
+  // O'chirish natijasini boshqarish
+  React.useEffect(() => {
+    if (isDeleteSuccess) {
+      setSnackbar({
+        open: true,
+        message: `${userToDelete?.name?.first} muvaffaqiyatli o'chirildi! (Mock data)`,
+        color: "success",
+      });
+      setOpenDeleteModal(false);
+      setUserToDelete(null);
+      resetDelete();
+    }
+    if (isDeleteError) {
+      setSnackbar({
+        open: true,
+        message: "Xatolik: O'chirish amalga oshmadi (Mock API javobi).",
+        color: "danger",
+      });
+      setOpenDeleteModal(false);
+      setUserToDelete(null);
+      resetDelete();
+    }
+  }, [isDeleteSuccess, isDeleteError, userToDelete, resetDelete]);
 
   // 3. DATA MANIPULATSIYASI VA FILTRLASH (useMemo)
   const innerData = data?.data;
@@ -69,14 +139,11 @@ export default function UsersTable() {
 
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();
 
-  // useMemo yordamida frontend filtrlash
   const filteredUsers = useMemo(() => {
     if (!normalizedSearchTerm) {
       return allUsers;
     }
-
     return allUsers.filter((user) => {
-      // Qidiruv maydonlari
       const fullName = `${user.name?.first || ""} ${
         user.name?.last || ""
       }`.toLowerCase();
@@ -84,7 +151,6 @@ export default function UsersTable() {
       const location = `${user.location?.city || ""}, ${
         user.location?.state || ""
       }`.toLowerCase();
-
       return (
         fullName.includes(normalizedSearchTerm) ||
         email.includes(normalizedSearchTerm) ||
@@ -93,23 +159,65 @@ export default function UsersTable() {
     });
   }, [allUsers, normalizedSearchTerm]);
 
-  const users = filteredUsers; // Jadval uchun filtrlangan ro'yxat
+  const users = filteredUsers;
   const totalPages = innerData?.totalPages || 1;
 
   // 4. HANDLER FUNKSIYALARI
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
-    // setPage o'zgarganda qidiruvni tozalash shart emas, chunki u avtomatik yangi API so'rov yuboradi
   };
 
   const handleSearchChange = (event) => {
-    // Qidiruv qiymati o'zgarganda sahifani 1-ga qaytarish muhim
     setPage(1);
     setSearchTerm(event.target.value);
   };
 
-  // 5. EARLY RETURN (yuklanish/xato holati) - Barcha Hook'lar chaqirilgandan keyin keladi
+  // FORM MODAL HANDLERLARI (Qo'shish/Tahrirlash)
+  const handleOpenAddModal = () => {
+    setFormModalMode("add");
+    setFormInitialData({});
+    setOpenFormModal(true);
+  };
 
+  const handleOpenEditModal = (user) => {
+    setFormModalMode("edit");
+    setFormInitialData(user);
+    setOpenFormModal(true);
+  };
+
+  const handleCloseFormModal = () => {
+    setOpenFormModal(false);
+    setFormInitialData({});
+  };
+
+  // KO'RISH MODALI HANDLERLARI <<<< QO'SHILDI
+  const handleViewClick = (user) => {
+    setUserToView(user);
+    setOpenViewModal(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setOpenViewModal(false);
+    setUserToView(null);
+  };
+
+  // O'CHIRISH HANDLERLARI
+  const handleDeleteClick = (user) => {
+    setUserToDelete(user);
+    setOpenDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (userToDelete) {
+      try {
+        await deleteUser(userToDelete.login.uuid).unwrap();
+      } catch (error) {
+        console.error("Delete mutatsiyasi xatosi:", error);
+      }
+    }
+  };
+
+  // 5. EARLY RETURN (yuklanish/xato holati)
   if (isLoading && page === 1) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
@@ -129,8 +237,104 @@ export default function UsersTable() {
   // 6. KOMPONENTNI RENDERLASH
   return (
     <React.Fragment>
-      {/* Qidiruv Inputi */}
-      <Box sx={{ mb: 2, display: "flex", justifyContent: "flex-end" }}>
+      {/* 6.1. Qo'shish/Tahrirlash Modali */}
+      <UserFormModal
+        open={openFormModal}
+        onClose={handleCloseFormModal}
+        mode={formModalMode}
+        initialData={formInitialData}
+      />
+
+      {/* 6.2. Ko'rish Modali <<<< QO'SHILDI */}
+      <UserViewModal
+        open={openViewModal}
+        onClose={handleCloseViewModal}
+        userData={userToView}
+      />
+
+      {/* 6.3. O'chirishni Tasdiqlash Modali (AlertDialog) */}
+      <Modal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
+        <ModalDialog variant="outlined" role="alertdialog">
+          <Typography
+            component="h2"
+            id="alert-dialog-title"
+            level="h4"
+            startDecorator={<WarningIcon color="danger" />}
+          >
+            Foydalanuvchini o'chirishni tasdiqlaysizmi?
+          </Typography>
+          <Divider />
+          <Typography
+            id="alert-dialog-description"
+            textColor="text.tertiary"
+            sx={{ my: 2 }}
+          >
+            Siz haqiqatan ham **{userToDelete?.name?.first}{" "}
+            {userToDelete?.name?.last}** foydalanuvchisini o'chirmoqchimisiz?
+          </Typography>
+          <Box
+            sx={{ display: "flex", gap: 1, justifyContent: "flex-end", pt: 2 }}
+          >
+            <JoyButton
+              variant="plain"
+              color="neutral"
+              onClick={() => setOpenDeleteModal(false)}
+              disabled={isDeleting}
+            >
+              Bekor qilish
+            </JoyButton>
+            <JoyButton
+              variant="solid"
+              color="danger"
+              onClick={handleConfirmDelete}
+              loading={isDeleting}
+            >
+              O'chirishni tasdiqlash
+            </JoyButton>
+          </Box>
+        </ModalDialog>
+      </Modal>
+
+      {/* 6.4. Snackbar Komponenti */}
+      <Snackbar
+        open={snackbar.open}
+        variant="solid"
+        color={snackbar.color}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        endDecorator={
+          <IconButton
+            onClick={() => setSnackbar({ ...snackbar, open: false })}
+            size="sm"
+            variant="plain"
+            sx={{ "--IconButton-size": "24px" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        }
+      >
+        {snackbar.message}
+      </Snackbar>
+
+      {/* 6.5. Qidiruv va Qo'shish Tugmasi */}
+      <Box
+        sx={{
+          mb: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <JoyButton
+          startDecorator={<AddIcon />}
+          onClick={handleOpenAddModal}
+          size="sm"
+          sx={{ minWidth: 150 }}
+        >
+          Yangi qo'shish
+        </JoyButton>
         <Input
           placeholder="Ism, email yoki manzil bo'yicha qidiruv..."
           variant="outlined"
@@ -142,6 +346,7 @@ export default function UsersTable() {
         />
       </Box>
 
+      {/* 6.6. Jadval Kontenti */}
       <Sheet
         variant="outlined"
         sx={{
@@ -234,7 +439,7 @@ export default function UsersTable() {
                     size="sm"
                     src={user.picture?.thumbnail}
                     alt={`${user.name?.first}'s picture`}
-                    sx={{ "--Avatar-size": "32px" }}
+                    sx={{ "--Avatar-size": "35px" }}
                   />
                 </td>
                 <td>{`${user.name?.first} ${user.name?.last}`}</td>
@@ -254,7 +459,7 @@ export default function UsersTable() {
                       size="sm"
                       variant="soft"
                       color="primary"
-                      onClick={() => alert(`Ko'rish: ${user.name?.first}`)}
+                      onClick={() => handleViewClick(user)} // <<< Ko'rish Modali ochiladi
                     >
                       <VisibilityIcon fontSize="small" />
                     </IconButton>
@@ -262,7 +467,7 @@ export default function UsersTable() {
                       size="sm"
                       variant="soft"
                       color="warning"
-                      onClick={() => alert(`Tahrirlash: ${user.name?.first}`)}
+                      onClick={() => handleOpenEditModal(user)}
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
@@ -270,7 +475,8 @@ export default function UsersTable() {
                       size="sm"
                       variant="soft"
                       color="danger"
-                      onClick={() => alert(`O'chirish: ${user.name?.first}`)}
+                      onClick={() => handleDeleteClick(user)}
+                      disabled={isDeleting}
                     >
                       <DeleteForeverIcon fontSize="small" />
                     </IconButton>
