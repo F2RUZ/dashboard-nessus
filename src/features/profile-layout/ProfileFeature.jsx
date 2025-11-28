@@ -24,17 +24,14 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 export default function ProfileFeature() {
   const { user: authUser } = useSelector((state) => state.auth);
 
-  // 1. Lokal holatlar
   const [firstName, setFirstName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [avatarPreview, setAvatarPreview] = React.useState(null);
 
-  // Loading holatlarini qo'lda boshqaramiz
   const [isLoading, setIsLoading] = React.useState(true);
   const [isUpdating, setIsUpdating] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
 
-  // Snackbar holati
   const [snackbar, setSnackbar] = React.useState({
     open: false,
     message: "",
