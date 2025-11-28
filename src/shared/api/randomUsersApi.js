@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const randomUsersApi = createApi({
   reducerPath: "randomUsersApi",
+  // Haqiqiy API: FreeAPI.app
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.freeapi.app/api/v1/public/",
   }),
