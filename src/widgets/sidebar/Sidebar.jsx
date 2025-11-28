@@ -47,11 +47,6 @@ const navigationItems = [
     path: "/dashboard/profile",
     Icon: PersonRoundedIcon,
   },
-  {
-    name: "Sozlamalar",
-    path: "/dashboard/settings",
-    Icon: SettingsRoundedIcon,
-  },
 ];
 
 export default function Sidebar() {
