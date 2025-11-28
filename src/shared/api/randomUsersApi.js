@@ -7,16 +7,22 @@ export const randomUsersApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://api.freeapi.app/api/v1/public/",
   }),
-  // Tags (keshni boshqarish uchun)
   tagTypes: ["UserList"],
   endpoints: (builder) => ({
-    // Foydalanuvchilarni yuklash querysi (page va limit parametrlarini oladi)
+    // 'search' parametrini qabul qiladigan qilib yangilandi
     getUsers: builder.query({
-      query: ({ page = 1, limit = 15 }) =>
-        // API talabiga mos so'rov: /randomusers?page=1&limit=15
-        `randomusers?page=${page}&limit=${limit}`,
+      query: ({ page = 1, limit = 10, search = "" }) => {
+        // Asosiy so'rov satri
+        let queryString = `randomusers?page=${page}&limit=${limit}`;
 
-      // Bu query natijasini 'UserList' tagi bilan belgilaymiz
+        // Agar qidiruv so'zi bo'lsa, uni so'rovga qo'shamiz (real API uchun)
+        if (search) {
+          // Real API uchun query: randomusers?page=1&limit=10&search=john
+          queryString += `&search=${search}`;
+        }
+
+        return queryString;
+      },
       providesTags: ["UserList"],
     }),
   }),
