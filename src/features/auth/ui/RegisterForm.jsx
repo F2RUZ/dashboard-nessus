@@ -45,7 +45,7 @@ export default function RegisterForm() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   React.useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/profile");
+      router.replace("/dashboard/profile");
     }
   }, [isAuthenticated, router]);
 
