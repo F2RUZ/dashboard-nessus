@@ -1,9 +1,8 @@
-// src/features/users/ui/UserAddButton.jsx
 "use client";
 import * as React from "react";
 import { Button } from "@mui/joy";
 import AddIcon from "@mui/icons-material/Add";
-import UserFormModal from "./UserFormModal"; // Keyingi qadamda yaratamiz
+import UserFormModal from "./UserFormModal"; 
 
 export default function UserAddButton() {
   const [open, setOpen] = React.useState(false);
@@ -13,16 +12,14 @@ export default function UserAddButton() {
 
   return (
     <React.Fragment>
-      {/* 1. Yangi foydalanuvchi qo'shish tugmasi */}
       <Button startDecorator={<AddIcon />} onClick={handleOpen} color="primary">
         Yangi Foydalanuvchi
       </Button>
 
-      {/* 2. Forma Modali */}
       <UserFormModal
         open={open}
         onClose={handleClose}
-        mode="add" // Qo'shish rejimini ko'rsatish
+        mode="add" 
       />
     </React.Fragment>
   );

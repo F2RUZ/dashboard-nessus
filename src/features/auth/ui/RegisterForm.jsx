@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRegisterMutation } from "../model/authApi"; 
+import { useRegisterMutation } from "../model/authApi";
 import { setCredentials } from "../model/authSlice";
 import { useRouter } from "next/navigation";
 import {
@@ -14,9 +14,9 @@ import {
   Card,
   Alert,
   Link,
-  Snackbar, 
+  Snackbar,
   IconButton,
-  FormHelperText, 
+  FormHelperText,
 } from "@mui/joy";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
@@ -25,23 +25,19 @@ export default function RegisterForm() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // 1. Lokal Holatlar
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [localErrors, setLocalErrors] = React.useState({});
 
-  // 2. RTK Query Hook
   const [register, { isLoading, error }] = useRegisterMutation();
 
-  // 3. Snackbar Holati
   const [snackbar, setSnackbar] = React.useState({
     open: false,
     message: "",
     color: "success",
   });
 
-  // Kirishdan oldin allaqachon kirilganligini tekshirish
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -49,12 +45,10 @@ export default function RegisterForm() {
     }
   }, [isAuthenticated, router]);
 
-  // 4. Lokal Validatsiya Funksiyasi
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
 
-    // Email Validatsiyasi
     if (!email.trim()) {
       newErrors.email = "Email kiritilishi shart.";
       isValid = false;
@@ -63,7 +57,6 @@ export default function RegisterForm() {
       isValid = false;
     }
 
-    // Parol Validatsiyasi
     if (!password.trim()) {
       newErrors.password = "Parol kiritilishi shart.";
       isValid = false;
@@ -72,7 +65,6 @@ export default function RegisterForm() {
       isValid = false;
     }
 
-    // Parollarni mosligini tekshirish
     if (password !== confirmPassword) {
       newErrors.confirmPassword = "Parollar mos kelmadi!";
       isValid = false;
@@ -85,7 +77,6 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 5. Lokal Validatsiyani Tekshirish
     if (!validateForm()) {
       setSnackbar({
         open: true,

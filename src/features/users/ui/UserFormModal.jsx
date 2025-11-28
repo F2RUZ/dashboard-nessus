@@ -1,4 +1,3 @@
-// src/features/users/ui/UserFormModal.jsx
 "use client";
 import * as React from "react";
 import {
@@ -59,7 +58,6 @@ export default function UserFormModal({
     color: "success",
   });
 
-  // 1. Ma'lumotlarni Modal ochilganda/Mode o'zgarganda yuklash/tozalash
   React.useEffect(() => {
     if (open) {
       if (isEdit && initialData.name) {
@@ -74,13 +72,10 @@ export default function UserFormModal({
       }
       setErrors({});
     }
-    // Modal ochilganda/yopilganda oldingi Snackbar xabarini tozalash
     setSnackbar({ open: false, message: "", color: "success" });
   }, [open, isEdit, initialData]);
 
-  // 2. RTK Query Xatolik Natijalarini Boshqarish
   React.useEffect(() => {
-    // A. Modal yopilganda holatni tozalash
     if (!open) {
       setFormData(initialUserState);
       setErrors({});
@@ -89,7 +84,6 @@ export default function UserFormModal({
       return;
     }
 
-    // B. Xatolik sodir bo'lganda Snackbar ko'rsatish
     if (isAddError || isUpdateError) {
       setSnackbar({
         open: true,
@@ -150,7 +144,6 @@ export default function UserFormModal({
     if (validateForm()) {
       try {
         if (!isEdit) {
-          // FOYDALANUVCHI QO'SHISH
           await addUser({
             name: {
               first: formData.firstName,
@@ -166,7 +159,6 @@ export default function UserFormModal({
             color: "success",
           });
         } else {
-          // FOYDALANUVCHINI TAHRIRLASH
           await updateUser({
             login: initialData.login,
             name: {
@@ -186,10 +178,8 @@ export default function UserFormModal({
           });
         }
 
-        // Mutatsiya muvaffaqiyatli yakunlansa
         onClose();
       } catch (error) {
-        // Mock API (yoki haqiqiy API) xato javob qaytarsa
         console.error("Mutatsiya xatosi:", error);
 
         setSnackbar({
@@ -246,7 +236,6 @@ export default function UserFormModal({
           </Typography>
           <Divider />
 
-          {/* MUHIM: FORM komponenti barcha inputlar, divider va tugmalarni qamrab oladi */}
           <Box
             component="form"
             onSubmit={handleSubmit}
@@ -260,7 +249,6 @@ export default function UserFormModal({
               gap: 3,
             }}
           >
-            {/* 1. INPUTLAR BLOKI */}
             <Box
               sx={{
                 display: "grid",
@@ -325,7 +313,6 @@ export default function UserFormModal({
               </FormControl>
             </Box>
 
-            {/* 2. Divider va Tugmalar BLOKI - Form ichida */}
             <Divider sx={{ mt: "auto" }} />
             <Box
               sx={{
@@ -339,12 +326,11 @@ export default function UserFormModal({
                 variant="plain"
                 color="neutral"
                 onClick={onClose}
-                type="button" // Submit bo'lishining oldini oladi
+                type="button" 
               >
                 Bekor qilish
               </Button>
               <Button
-                type="submit" // ✅ Formani submit qiladi
                 variant="solid"
                 color="primary"
                 startDecorator={<SaveIcon />}

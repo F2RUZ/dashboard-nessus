@@ -1,4 +1,3 @@
-// src/app/page.js
 "use client";
 
 import { useEffect } from "react";
@@ -13,7 +12,7 @@ export default function HomePage() {
     if (token) {
       router.push("/dashboard");
     } else {
-      router.push("/login"); // To'g'ri URL
+      router.push("/login"); 
     }
   }, [token, router]);
 
