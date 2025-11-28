@@ -1,7 +1,8 @@
-// src/widgets/sidebar/Sidebar.jsx (Yakuniy Tuzatishlar bilan)
 "use client";
 import * as React from "react";
-// ... (Joy UI importlari)
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import {
   Box,
   Typography,
@@ -12,21 +13,51 @@ import {
   Button,
   IconButton,
 } from "@mui/joy";
-// ... (Ikonka va Redux importlari)
+
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-
-// ... (Redux va Router hooklari)
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded"; // 🟢 Yangi ikonka
 import { useDispatch } from "react-redux";
 import { logout } from "@/features/auth/model/authSlice";
 import { useRouter } from "next/navigation";
 
+const navigationItems = [
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+    Icon: DashboardRoundedIcon,
+  },
+
+  {
+    name: "Analitika",
+    path: "/dashboard/analytics",
+    Icon: AnalyticsRoundedIcon,
+  },
+  {
+    name: "Sozlamalar",
+    path: "/dashboard/settings",
+    Icon: SettingsRoundedIcon,
+  },
+  {
+    name: "Mening Profilim",
+    path: "/dashboard/profile",
+    Icon: PersonRoundedIcon,
+  },
+  {
+    name: "Sozlamalar",
+    path: "/dashboard/settings",
+    Icon: SettingsRoundedIcon,
+  },
+];
+
 export default function Sidebar() {
-  // Endi hech qanday prop qabul qilmaymiz
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
 
   const [isCollapsed, setIsCollapsed] = React.useState(false);
 
@@ -47,10 +78,8 @@ export default function Sidebar() {
       sx={{
         p: 2,
         minHeight: "100vh",
-        // MUHIM: width dinamik va flexShrink: 0 qo'shildi!
         width: sidebarWidth,
-        flexShrink: 0, // Bu Sidebar ning qisqarmasligini kafolatlaydi
-
+        flexShrink: 0,
         bgcolor: "background.surface",
         borderRight: "1px solid",
         borderColor: "divider",
@@ -59,7 +88,6 @@ export default function Sidebar() {
         transition: "width 0.2s",
       }}
     >
-      {/* 1. LOGOTIP va Yig'ish tugmasi */}
       <Box
         sx={{
           display: "flex",
@@ -90,28 +118,40 @@ export default function Sidebar() {
         </IconButton>
       </Box>
 
-      {/* 2. MENYU */}
       <List
         size="sm"
         sx={{
           "--ListItem-radius": "8px",
           "--List-gap": "4px",
           flexGrow: 1,
-          // Qisqarganda yozuvni yashirish uchun
           "--ListItem-minHeight": isCollapsed ? "40px" : "36px",
         }}
       >
-        <ListItem>
-          <ListItemButton selected>
-            <ListItemDecorator>
-              <DashboardRoundedIcon />
-            </ListItemDecorator>
-            {!isCollapsed && "Dashboard"}
-          </ListItemButton>
-        </ListItem>
+        {navigationItems.map((item) => {
+          const isActive =
+            pathname === item.path ||
+            (item.path === "/dashboard" && pathname.startsWith("/dashboard/"));
+
+          return (
+            <ListItem key={item.path}>
+              <ListItemButton
+                component={Link}
+                href={item.path}
+                aria-current={isActive ? "page" : undefined}
+                sx={{
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                }}
+              >
+                <ListItemDecorator>
+                  <item.Icon />
+                </ListItemDecorator>
+                {!isCollapsed && item.name}
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
 
-      {/* 3. CHIQISH TUGMASI */}
       <Box
         sx={{
           mt: "auto",
@@ -127,11 +167,13 @@ export default function Sidebar() {
           onClick={handleLogout}
           sx={{
             width: "100%",
+            "& .MuiButton-startDecorator": {
+              marginRight: isCollapsed ? 0 : 1,
+            },
             justifyContent: isCollapsed ? "center" : "flex-start",
           }}
         >
-          {/* Faqat Yig'ilmaganda yozuvni ko'rsatish */}
-          {!isCollapsed ? "Chiqish" : <LogoutRoundedIcon />}
+          {!isCollapsed ? "Chiqish" : null}
         </Button>
       </Box>
     </Box>

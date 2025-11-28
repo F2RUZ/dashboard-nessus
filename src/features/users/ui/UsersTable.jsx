@@ -1,17 +1,14 @@
 "use client";
 import React, { useState, useMemo } from "react";
 
-// RTK Query importlari
 import {
   useGetUsersQuery,
   useDeleteUserMutation,
 } from "@/shared/api/randomUsersApi";
 
-// Modallar importlari (UserViewModal qo'shildi)
 import UserFormModal from "./UserFormModal";
 import UserViewModal from "./UserViewModal";
 
-// Joy UI importlari
 import {
   Box,
   Typography,
@@ -30,7 +27,6 @@ import {
 } from "@mui/joy";
 import { useTheme } from "@mui/joy/styles";
 
-// Ikonkalar importlari
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -39,7 +35,6 @@ import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import WarningIcon from "@mui/icons-material/Warning";
 
-// Material UI importlari
 import Pagination from "@mui/material/Pagination";
 import {
   ThemeProvider as MuiThemeProvider,
@@ -48,7 +43,6 @@ import {
 
 const materialTheme = createTheme();
 
-// Sanani o'qiladigan formatga o'tkazish
 const formatDate = (dateString) => {
   if (!dateString) return "Noma'lum";
   try {
@@ -66,32 +60,26 @@ const formatDate = (dateString) => {
 export default function UsersTable() {
   const theme = useTheme();
 
-  // 1. STATE HOOKS
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const limit = 15;
 
-  // FORM MODAL HOLATI
   const [openFormModal, setOpenFormModal] = useState(false);
   const [formModalMode, setFormModalMode] = useState("add");
   const [formInitialData, setFormInitialData] = useState({});
 
-  // KO'RISH MODALI HOLATI <<<< QO'SHILDI
   const [openViewModal, setOpenViewModal] = useState(false);
   const [userToView, setUserToView] = useState(null);
 
-  // O'CHIRISH MODALI HOLATI
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  // SNACKBAR HOLATI
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     color: "success",
   });
 
-  // 2. RTK QUERY HOOKS
   const { data, error, isLoading, isFetching } = useGetUsersQuery({
     page,
     limit,
@@ -108,7 +96,6 @@ export default function UsersTable() {
     },
   ] = useDeleteUserMutation();
 
-  // O'chirish natijasini boshqarish
   React.useEffect(() => {
     if (isDeleteSuccess) {
       setSnackbar({
@@ -132,7 +119,6 @@ export default function UsersTable() {
     }
   }, [isDeleteSuccess, isDeleteError, userToDelete, resetDelete]);
 
-  // 3. DATA MANIPULATSIYASI VA FILTRLASH (useMemo)
   const innerData = data?.data;
   const rawUsers = innerData?.data;
   const allUsers = Array.isArray(rawUsers) ? rawUsers : [];
@@ -162,7 +148,6 @@ export default function UsersTable() {
   const users = filteredUsers;
   const totalPages = innerData?.totalPages || 1;
 
-  // 4. HANDLER FUNKSIYALARI
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -172,7 +157,6 @@ export default function UsersTable() {
     setSearchTerm(event.target.value);
   };
 
-  // FORM MODAL HANDLERLARI (Qo'shish/Tahrirlash)
   const handleOpenAddModal = () => {
     setFormModalMode("add");
     setFormInitialData({});
@@ -190,7 +174,6 @@ export default function UsersTable() {
     setFormInitialData({});
   };
 
-  // KO'RISH MODALI HANDLERLARI <<<< QO'SHILDI
   const handleViewClick = (user) => {
     setUserToView(user);
     setOpenViewModal(true);
@@ -201,7 +184,6 @@ export default function UsersTable() {
     setUserToView(null);
   };
 
-  // O'CHIRISH HANDLERLARI
   const handleDeleteClick = (user) => {
     setUserToDelete(user);
     setOpenDeleteModal(true);
@@ -217,7 +199,17 @@ export default function UsersTable() {
     }
   };
 
-  // 5. EARLY RETURN (yuklanish/xato holati)
+  const handleConfirmDelete = async () => {
+    if (userToDelete) {
+      try {
+        await deleteUser(userToDelete.login.uuid).unwrap();
+      } catch (error) {
+        console.error("Delete mutatsiyasi xatosi:", error);
+      }
+    }
+  };
+
+  
   if (isLoading && page === 1) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
@@ -234,10 +226,8 @@ export default function UsersTable() {
     );
   }
 
-  // 6. KOMPONENTNI RENDERLASH
   return (
     <React.Fragment>
-      {/* 6.1. Qo'shish/Tahrirlash Modali */}
       <UserFormModal
         open={openFormModal}
         onClose={handleCloseFormModal}
@@ -245,14 +235,12 @@ export default function UsersTable() {
         initialData={formInitialData}
       />
 
-      {/* 6.2. Ko'rish Modali <<<< QO'SHILDI */}
       <UserViewModal
         open={openViewModal}
         onClose={handleCloseViewModal}
         userData={userToView}
       />
 
-      {/* 6.3. O'chirishni Tasdiqlash Modali (AlertDialog) */}
       <Modal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
         <ModalDialog variant="outlined" role="alertdialog">
           <Typography
@@ -295,7 +283,6 @@ export default function UsersTable() {
         </ModalDialog>
       </Modal>
 
-      {/* 6.4. Snackbar Komponenti */}
       <Snackbar
         open={snackbar.open}
         variant="solid"
@@ -317,7 +304,6 @@ export default function UsersTable() {
         {snackbar.message}
       </Snackbar>
 
-      {/* 6.5. Qidiruv va Qo'shish Tugmasi */}
       <Box
         sx={{
           mb: 2,
@@ -346,7 +332,7 @@ export default function UsersTable() {
         />
       </Box>
 
-      {/* 6.6. Jadval Kontenti */}
+  
       <Sheet
         variant="outlined"
         sx={{
