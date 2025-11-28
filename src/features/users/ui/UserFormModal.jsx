@@ -146,7 +146,6 @@ export default function UserFormModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("handleSubmit ishga tushdi - Validatsiya Tekshiriladi.");
 
     if (validateForm()) {
       try {
