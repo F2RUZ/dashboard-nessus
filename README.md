@@ -1,37 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Dashboard-Nessus
+Ilg'or Tizim Boshqaruvi Paneli (Next.js 14 + RTK Query + FSD Architecture)
 
-## Getting Started
+Dashboard-Nessus — bu Next.js 14 (App Router) asosida yaratilgan, Redux Toolkit Query (RTK Query) bilan to‘liq integratsiyalashgan, Feature-Sliced Design (FSD) arxitekturasiga ega, zamonaviy va to‘liq responsiv boshqaruv paneli (Dashboard) ilovasidir.
 
-First, run the development server:
+Loyiha yuqori scalability, modularity va maintainability talablariga mos ravishda ishlab chiqilgan.
 
-```bash
+✨ Asosiy Texnologiyalar Steki
+Texnologiya	Maqsadi
+Next.js 14	Server Components, App Router, zamonaviy render strategiyalari
+MUI Joy UI	Figma darajasidagi zamonaviy UI komponentlar
+Redux Toolkit / RTK Query	Global state boshqaruvi + caching & invalidation
+Feature-Sliced Design (FSD)	Kodni qatlamlarga bo‘lib boshqarish va kengaytirish
+Recharts	Interaktiv grafiklar va analitika diagrammalari
+🏗️ Arxitektura: Feature-Sliced Design (FSD)
+
+Loyiha to‘liq FSD me’morchiligida qurilgan. Bu yirik jamoaviy loyihalarda ishlashni osonlashtiradi va kodni boshqarishni samarali qiladi.
+
+FSD Qatlamlari:
+Qatlam	Vazifa	Joylashuvi
+app/	Ilovani ishga tushirish, provayderlar, layoutlar	src/app
+shared/	Reusable funksiyalar, UI, hooks, utils	src/shared
+entities/	Ma’lumot modullari (User, Product va boshqalar)	src/entities
+features/	Foydalanuvchi bajaradigan funktsiyalar (login, profile, settings)	src/features
+widgets/	Murakkab UI bloklar (Sidebar, Header, Profile-Card)	src/widgets
+⚙️ O‘rnatish va Ishga Tushirish
+Talablar
+
+Node.js v18+
+
+npm yoki yarn
+
+🔧 1. Loyihani klonlash
+git clone [LOYIHA_URL]
+cd dashboard-nessus
+
+📦 2. Bog‘liqliklarni o‘rnatish
+npm install
+# yoki
+yarn install
+
+🔐 3. Muhit sozlamalari (.env.local)
+
+Loyihaning ildizida .env.local yarating:
+
+NEXT_PUBLIC_API_URL=https://api.yourdomain.com/api/v1
+
+
+Profil va sozlamalar ma'lumotlari LocalStorage orqali saqlanadi.
+
+▶️ 4. Loyihani ishga tushirish
 npm run dev
-# or
+# yoki
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Keyin brauzerda oching:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+👉 http://localhost:3000
 
-## Learn More
+📈 Analitika: Asosiy Ko‘rsatkichlar (KPI)
 
-To learn more about Next.js, take a look at the following resources:
+feature/analytics bo‘limi Recharts asosida qurilgan bo‘lib, tizimning sog‘lig‘i va o‘sish dinamikasini ko‘rsatadi.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🔹 1. Oyma-oy foydalanuvchi o‘sishi (Line Chart)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Yangi ro‘yxatdan o‘tgan foydalanuvchilar vs faol foydalanuvchilar.
 
-## Deploy on Vercel
+🔹 2. Auditoriya taqsimoti (Pie Chart)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Jinslar bo‘yicha demografik taqsimot.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# dashboard-nessus
+✅ Loyiha Xususiyatlari
+1. Ilg‘or Ma’lumot Boshqaruvi
+
+RTK Query Caching
+
+Optimistic Updates
+
+Auto-refetching & invalidation
+
+2. Modern UI/UX
+
+To‘liq responsiv dizayn
+
+Mobil qurilmalarda Drawer Sidebar
+
+Dark / Light Mode orqali oson theming
+
+Snackbar orqali toast xabarlari
+
+📁 Loyihaning Minimal Strukturasi
+src/
+ ├── app/
+ ├── shared/
+ ├── entities/
+ ├── features/
+ ├── widgets/
+ └── pages/
+
+🧑‍💻 Muallif
+
+Dashboard-Nessus — zamonaviy dashboard arxitekturasining real joriy etilishi.
+Loyiha kengaytiriladigan, barqaror va yuqori samaradorlikka ega boshqaruv panelini yaratish uchun mo‘ljallangan.
