@@ -1,4 +1,3 @@
-// src/shared/lib/ProtectedRoute.jsx
 "use client";
 import { useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
@@ -17,13 +16,13 @@ export default function ProtectedRoute({ children }) {
       router.replace("/login");
     } else if (token && (pathname === "/login" || pathname === "/register")) {
       // Autentifikatsiyadan o'tgan, lekin Auth sahifasida -> Dashboardga
-      router.replace("/dashboard");
+      router.replace("/dashboard/profile");
     }
     setIsLoading(false);
   }, [token, router, pathname]);
 
   // Agar token yo'q bo'lsa va Dashboardda bo'lsa, yuklanishni kutish.
-  if (isLoading || (!token && pathname === "/dashboard")) {
+  if (isLoading || (!token && pathname === "/dashboard/")) {
     return null;
   }
 
