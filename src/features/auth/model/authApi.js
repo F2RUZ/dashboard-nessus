@@ -1,13 +1,11 @@
-// src/features/auth/model/authApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "/" }), // Fake URL
+  baseQuery: fetchBaseQuery({ baseUrl: "/" }), 
   endpoints: (builder) => ({
     login: builder.mutation({
       queryFn: async ({ email, password }) => {
-        // 1 soniya kutish
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         if (email && password) {

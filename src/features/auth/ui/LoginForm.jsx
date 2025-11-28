@@ -25,22 +25,18 @@ export default function LoginForm() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // 1. Lokal Holatlar
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [localErrors, setLocalErrors] = React.useState({});
 
-  // 2. RTK Query Hook
   const [login, { isLoading, error }] = useLoginMutation();
 
-  // 3. Snackbar Holati
   const [snackbar, setSnackbar] = React.useState({
     open: false,
     message: "",
     color: "success",
   });
 
-  // Kirishdan oldin allaqachon kirilganligini tekshirish (authSlice dan olib keling)
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -48,12 +44,10 @@ export default function LoginForm() {
     }
   }, [isAuthenticated, router]);
 
-  // 4. Lokal Validatsiya Funksiyasi
   const validateForm = () => {
     let newErrors = {};
     let isValid = true;
 
-    // Email Validatsiyasi
     if (!email.trim()) {
       newErrors.email = "Email kiritilishi shart.";
       isValid = false;
@@ -62,7 +56,6 @@ export default function LoginForm() {
       isValid = false;
     }
 
-    // Parol Validatsiyasi
     if (!password.trim()) {
       newErrors.password = "Parol kiritilishi shart.";
       isValid = false;
@@ -78,7 +71,6 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 5. Lokal Validatsiyani Tekshirish
     if (!validateForm()) {
       setSnackbar({
         open: true,
@@ -89,24 +81,20 @@ export default function LoginForm() {
     }
 
     try {
-      // 6. RTK Mutation'ni chaqirish
       const userData = await login({ email, password }).unwrap();
 
       dispatch(setCredentials(userData));
 
-      // Muvaffaqiyatli xabar
       setSnackbar({
         open: true,
         message: "Muvaffaqiyatli kirildi!",
         color: "success",
       });
 
-      // Dashboardga yo'naltirish
       router.push("/dashboard/profile");
     } catch (err) {
       console.error("Login failed", err);
 
-      // 7. Xato xabarini ko'rsatish (RTK Query Error)
       const errorMessage =
         err?.data?.message || err?.error || "Noma'lum xato sodir bo'ldi.";
       setSnackbar({
@@ -149,7 +137,6 @@ export default function LoginForm() {
             Tizimga Kirish
           </Typography>
 
-          {/* RTK Querydan kelgan global xato */}
           {error && (
             <Alert color="danger" sx={{ mb: 2 }}>
               {error.data?.message || error.error || "Ulanish xatosi."}

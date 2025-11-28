@@ -20,6 +20,7 @@ import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import MenuOpenRoundedIcon from "@mui/icons-material/MenuOpenRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded"; // 🟢 Yangi ikonka
 import { useDispatch } from "react-redux";
 import { logout } from "@/features/auth/model/authSlice";
 import { useRouter } from "next/navigation";
@@ -29,6 +30,17 @@ const navigationItems = [
     name: "Dashboard",
     path: "/dashboard",
     Icon: DashboardRoundedIcon,
+  },
+
+  {
+    name: "Analitika",
+    path: "/dashboard/analytics",
+    Icon: AnalyticsRoundedIcon,
+  },
+  {
+    name: "Sozlamalar",
+    path: "/dashboard/settings",
+    Icon: SettingsRoundedIcon,
   },
   {
     name: "Mening Profilim",
