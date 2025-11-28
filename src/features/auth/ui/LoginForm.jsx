@@ -44,7 +44,7 @@ export default function LoginForm() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   React.useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/profile");
+      router.replace("/dashboard/profile");
     }
   }, [isAuthenticated, router]);
 
@@ -102,7 +102,7 @@ export default function LoginForm() {
       });
 
       // Dashboardga yo'naltirish
-      router.push("/profile");
+      router.push("/dashboard/profile");
     } catch (err) {
       console.error("Login failed", err);
 

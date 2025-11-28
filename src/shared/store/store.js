@@ -1,4 +1,3 @@
-// src/shared/store/store.js
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import authReducer from "@/features/auth/model/authSlice";
