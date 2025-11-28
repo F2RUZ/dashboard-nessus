@@ -1,4 +1,3 @@
-// src/features/users/ui/UserViewModal.jsx
 "use client";
 import * as React from "react";
 import {
@@ -16,7 +15,6 @@ import EmailIcon from "@mui/icons-material/Email";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneIcon from "@mui/icons-material/Phone";
 
-// Sanani formatlash funksiyasi (UsersTable dan olinadi)
 const formatDate = (dateString) => {
   if (!dateString) return "Noma'lum";
   try {
@@ -32,7 +30,6 @@ const formatDate = (dateString) => {
 };
 
 export default function UserViewModal({ open, onClose, userData }) {
-  // Agar ma'lumot bo'lmasa, qaytaramiz
   if (!userData) return null;
 
   const fullName = `${userData.name?.first || ""} ${userData.name?.last || ""}`;
@@ -41,7 +38,6 @@ export default function UserViewModal({ open, onClose, userData }) {
   }, ${userData.location?.country || ""}`;
   const registeredDate = formatDate(userData.registered?.date);
 
-  // Kichik yordamchi komponent
   const DetailItem = ({ icon, label, value }) => (
     <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
       {React.cloneElement(icon, { color: "primary", fontSize: "small" })}
@@ -71,7 +67,6 @@ export default function UserViewModal({ open, onClose, userData }) {
         <Box
           sx={{ mt: 2, p: 2, display: "flex", flexDirection: "column", gap: 2 }}
         >
-          {/* Rasm va Ism qismi */}
           <Box
             sx={{
               display: "flex",
@@ -95,7 +90,6 @@ export default function UserViewModal({ open, onClose, userData }) {
             </Box>
           </Box>
 
-          {/* Batafsil ma'lumotlar */}
           <Grid container spacing={2}>
             <Grid xs={12} sm={6}>
               <DetailItem

@@ -1,4 +1,3 @@
-// src/features/analytics/AnalyticsFeature.jsx
 "use client";
 import * as React from "react";
 import {
@@ -30,7 +29,6 @@ import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
 import AccessTimeFilledRoundedIcon from "@mui/icons-material/AccessTimeFilledRounded";
 
-// --- MOCK DATA (Ma'lumotlar bazasi o'rniga) ---
 const growthData = [
   { name: "Yan", users: 400, active: 240 },
   { name: "Fev", users: 300, active: 139 },
@@ -48,7 +46,6 @@ const genderData = [
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-// Kichik yordamchi karta komponenti
 function StatCard({ title, value, icon, color }) {
   return (
     <Card variant="outlined">
@@ -88,7 +85,6 @@ export default function AnalyticsFeature() {
       </Typography>
       <Divider sx={{ mb: 4 }} />
 
-      {/* 1. KPI KARTALAR */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid xs={12} sm={4}>
           <StatCard
@@ -116,9 +112,7 @@ export default function AnalyticsFeature() {
         </Grid>
       </Grid>
 
-      {/* 2. ASOSIY GRAFIKLAR */}
       <Grid container spacing={3}>
-        {/* A. User Growth (Line Chart) */}
         <Grid xs={12} lg={8}>
           <Card variant="outlined" sx={{ height: 400 }}>
             <Typography level="title-lg" mb={3}>
@@ -161,7 +155,6 @@ export default function AnalyticsFeature() {
           </Card>
         </Grid>
 
-        {/* B. Gender Distribution (Pie Chart) */}
         <Grid xs={12} lg={4}>
           <Card variant="outlined" sx={{ height: 400 }}>
             <Typography level="title-lg" mb={3}>
@@ -194,7 +187,6 @@ export default function AnalyticsFeature() {
           </Card>
         </Grid>
 
-        {/* C. Monthly Activity (Bar Chart) - Qo'shimcha */}
         <Grid xs={12}>
           <Card variant="outlined" sx={{ height: 350 }}>
             <Typography level="title-lg" mb={3}>

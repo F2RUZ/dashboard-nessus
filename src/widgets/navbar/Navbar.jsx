@@ -1,11 +1,9 @@
-// src/widgets/navbar/Navbar.jsx
 "use client";
 import * as React from "react";
 import { Box, Typography, IconButton, useColorScheme } from "@mui/joy";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 
-// Theme Toggle uchun alohida komponent
 function ColorSchemeToggle() {
   const { mode, setMode } = useColorScheme();
   const [mounted, setMounted] = React.useState(false);
@@ -14,7 +12,6 @@ function ColorSchemeToggle() {
     setMounted(true);
   }, []);
 
-  // Hydration xatosidan qochish (avval muhokama qilinganidek)
   if (!mounted) {
     return <IconButton size="sm" variant="outlined" color="neutral" />;
   }
@@ -56,7 +53,6 @@ export default function Navbar() {
       </Box>
 
       <Box sx={{ display: "flex", gap: 1 }}>
-        {/* Dark/Light mode tugmasi */}
         <ColorSchemeToggle />
       </Box>
     </Box>
