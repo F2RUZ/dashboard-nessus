@@ -6,7 +6,7 @@ import { Typography } from "@mui/joy";
 export default function DashboardPage() {
   return (
     <ProtectedRoute>
-      <Typography level="h1" sx={{ mb: 4 }}>
+      <Typography level="h3" sx={{ mb: 4 }}>
         Foydalanuvchilar Ro'yxati
       </Typography>
 
