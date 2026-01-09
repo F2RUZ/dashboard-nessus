@@ -1,0 +1,50 @@
+name: CI/CD - Next.js Docker
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Git repository ni clone qilamiz
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Node.js setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build Next.js project
+      - name: Build Next.js
+        run: npm run build
+
+      # 5. Build Docker image
+      - name: Build Docker image
+        run: docker build -t dashboard-nessus-nextjs .
+
+      # 6. (Optional) Push Docker image to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push Docker image
+        run: |
+          docker tag dashboard-nessus-nextjs ${{ secrets.DOCKER_USERNAME }}/dashboard-nessus-nextjs:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/dashboard-nessus-nextjs:latest
+
+          
